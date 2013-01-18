@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+      html { 
+        height: 100%; 
+      }
+      body { 
+        height: 100%; 
+        margin: 0; 
+        padding: 0;
+      }
+      #map_canvas { 
+        margin-top: 0px;
+        height: 90%;
+      }
+    </style>
+
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+    
+    <script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false">
+    </script>
+
+    <script type="text/javascript">
+      function initialize() {
+        geocoder = new google.maps.Geocoder();
+        var mapOptions = {
+          center: new google.maps.LatLng(37.7750, -122.4183),
+          zoom: 4,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+
+       //Create a new marker
+        function createMarker (lat, lng){
+           var marker = new google.maps.Marker({
+            position: new google.maps.LatLng(lat, lng),
+            map: map,
+            animation: google.maps.Animation.DROP,
+            title: 'Hello World!'
+          });
+        }
+
+        var socket = io.connect("http://localhost:3000");
+        socket.on("tweets", function (tweet){
+          createMarker(tweet[0], tweet[1]);
+        });
+
+      }
+    </script>
+
+    <title>@twitter</title>
+</head>
+  <body onload="initialize()">
+    <h1>where you @twitter</h1>
+    <div id="map_canvas"></div>
+
+  </body>
+</html>
